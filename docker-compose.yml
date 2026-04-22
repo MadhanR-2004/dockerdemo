@@ -62,7 +62,7 @@ services:
       replicas: 1                   # ← only 1 instance of DB
 
   api:
-    image: ttsdevopsteam/pgcrud:v2
+    image: madhanr2004/pgcrud:latest
     ports:
       - "3000:3000"
     environment:
