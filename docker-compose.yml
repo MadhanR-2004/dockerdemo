@@ -1,0 +1,79 @@
+# version: "3.9"
+
+# services:
+
+#   # ── PostgreSQL Database ────────────────────────────────────────────────────
+#   db:
+#     image: postgres:16-alpine        # Official Postgres image (lightweight)
+#     container_name: postgres_db
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_USER: postgres        # DB username
+#       POSTGRES_PASSWORD: password    # DB password
+#       POSTGRES_DB: appdb             # Database name to create on startup
+#     ports:
+#       - "5432:5432"                  # Expose to host so you can use TablePlus/psql
+#     volumes:
+#       - postgres_data:/var/lib/postgresql/data   # Persist data between restarts
+#     healthcheck:
+#       test: ["CMD-SHELL", "pg_isready -U postgres"]
+#       interval: 5s
+#       timeout: 5s
+#       retries: 5
+
+#   # ── Express API ────────────────────────────────────────────────────────────
+#   api:
+#     build: .                         # Build using our Dockerfile
+#     container_name: express_api
+#     restart: unless-stopped
+#     ports:
+#       - "3000:3000"                  # Map host port 3000 → container port 3000
+#     environment:
+#       PORT: 3000
+#       DB_HOST: db                    # ← "db" is the service name above, not localhost!
+#       DB_PORT: 5432
+#       DB_NAME: appdb
+#       DB_USER: postgres
+#       DB_PASSWORD: password
+#     depends_on:
+#       db:
+#         condition: service_healthy   # Wait until Postgres passes healthcheck
+
+# # ── Named volume (data persists even after docker compose down) ─────────────
+# volumes:
+#   postgres_data:
+# #-----------------------------------------------------------------------------------------------------
+
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: appdb
+    volumes:
+       - postgres_data:/var/lib/postgresql/data
+    deploy:
+      placement:
+        constraints:
+          - node.role ==  worker    # ← DB only runs on YOUR PC
+      replicas: 1                   # ← only 1 instance of DB
+
+  api:
+    image: ttsdevopsteam/pgcrud:v2
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: appdb
+      DB_USER: postgres
+      DB_PASSWORD: password
+    deploy:
+      replicas: 2                   # ← 1 api per PC
+
+volumes:
+  postgres_data:
