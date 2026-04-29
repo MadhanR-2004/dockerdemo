@@ -24,4 +24,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: madhanr2004/pgcrud:latest
+          tags: madhanr2004/pgcrud:v3
