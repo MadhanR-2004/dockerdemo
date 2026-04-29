@@ -37,18 +37,18 @@ docker compose down -v
 curl http://10.1.27.156:3000/health
 
 # Create a user
-curl -X POST http://10.1.27.156:3000/users \
+curl -X POST http://localhost:3000/users \
   -H "Content-Type: application/json" \
   -d '{"name": "Madhan", "email": "madhan@example.com"}'
 
 # Get all users
-curl http://10.1.27.156:3000/users
+curl http://localhost:3000/users
 
 # Get user by ID
-curl http://10.1.27.156:3000/users/1
+curl http://localhost:3000/users/1
 
 # Delete a user
-curl -X DELETE http://10.1.27.156:3000/users/1
+curl -X DELETE http://localhost:3000/users/1
 ```
 
 ## Connect to Postgres directly (optional)
